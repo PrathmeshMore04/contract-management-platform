@@ -1,0 +1,84 @@
+/* Lifecycle Stepper Component */
+.lifecycle-stepper {
+  width: 100%;
+  margin-bottom: 2rem; /* 32px */
+}
+
+.lifecycle-stepper__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+/* Progress Line */
+.lifecycle-stepper__progress-line {
+  position: absolute;
+  top: 1.25rem; /* 20px - aligns with center of circles */
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #E5E7EB; /* gray-200 */
+  z-index: 0;
+}
+
+.lifecycle-stepper__progress-fill {
+  height: 100%;
+  background-color: #4F46E5; /* primary */
+  transition: width 0.5s ease;
+}
+
+/* Step */
+.lifecycle-stepper__step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+}
+
+/* Step Circle */
+.lifecycle-stepper__step-circle {
+  width: 2.5rem; /* 40px */
+  height: 2.5rem; /* 40px */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.lifecycle-stepper__step-circle--completed {
+  background-color: #4F46E5; /* primary */
+  color: #FFFFFF;
+}
+
+.lifecycle-stepper__step-circle--pending {
+  background-color: #FFFFFF;
+  border: 2px solid #D1D5DB; /* gray-300 */
+  color: #9CA3AF; /* gray-400 */
+}
+
+.lifecycle-stepper__step-icon {
+  display: block;
+}
+
+/* Step Label */
+.lifecycle-stepper__step-label {
+  margin-top: 0.5rem; /* 8px */
+  font-size: 0.75rem; /* 12px */
+  font-weight: 500;
+  text-align: center;
+}
+
+.lifecycle-stepper__step-label--current {
+  color: #4F46E5; /* primary */
+}
+
+.lifecycle-stepper__step-label--past {
+  color: #4B5563; /* gray-600 */
+}
+
+.lifecycle-stepper__step-label--pending {
+  color: #9CA3AF; /* gray-400 */
+}

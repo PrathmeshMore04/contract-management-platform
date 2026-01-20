@@ -1,0 +1,105 @@
+/* App Layout */
+.app-layout {
+  min-height: 100vh;
+  background-color: #F8FAFC; /* slate-50 */
+}
+
+/* Navigation Bar */
+.app-nav {
+  background-color: #FFFFFF;
+  border-bottom: 1px solid #E2E8F0; /* slate-200 */
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.app-nav__container {
+  max-width: 80rem; /* 1280px - max-w-7xl */
+  margin: 0 auto;
+  padding: 0 1rem; /* 16px */
+}
+
+.app-nav__content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 4rem; /* 64px */
+}
+
+/* Logo */
+.app-nav__logo {
+  display: flex;
+  align-items: center;
+}
+
+.app-nav__logo-text {
+  font-size: 1.5rem; /* 24px */
+  font-weight: 700;
+  color: #4F46E5; /* primary */
+  margin: 0;
+}
+
+/* Navigation Tabs */
+.app-nav__tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem; /* 4px */
+}
+
+/* Nav Tab */
+.nav-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* 8px */
+  padding: 0.5rem 1rem; /* 8px 16px */
+  border-top-left-radius: 0.5rem; /* 8px */
+  border-top-right-radius: 0.5rem; /* 8px */
+  border-bottom: 2px solid transparent;
+  position: relative;
+  text-decoration: none;
+  transition: all 0.2s;
+  color: #475569; /* slate-600 */
+  background-color: transparent;
+}
+
+.nav-tab:hover {
+  color: #1E293B; /* slate-800 */
+  background-color: #F8FAFC; /* slate-50 */
+}
+
+.nav-tab--active {
+  border-bottom-color: #4F46E5; /* primary */
+  color: #4F46E5; /* primary */
+  background-color: #F8FAFC; /* slate-50 */
+}
+
+.nav-tab__icon {
+  color: #64748B; /* slate-500 */
+  transition: color 0.2s;
+}
+
+.nav-tab__icon--active {
+  color: #4F46E5; /* primary */
+}
+
+.nav-tab__text {
+  font-weight: 500;
+  font-size: 0.875rem; /* 14px */
+}
+
+.nav-tab__indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #4F46E5; /* primary */
+}
+
+/* Main Content Area */
+.app-main {
+  max-width: 80rem; /* 1280px - max-w-7xl */
+  margin: 0 auto;
+  padding: 2rem 1rem; /* 32px 16px */
+}
