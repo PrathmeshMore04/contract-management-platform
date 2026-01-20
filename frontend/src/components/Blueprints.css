@@ -201,6 +201,22 @@
   color: #9CA3AF; /* gray-400 */
 }
 
+/* Position Inputs Group */
+.blueprint-builder__position-group {
+  display: flex;
+  gap: 1rem; /* 16px */
+  margin-bottom: 1.5rem;
+}
+
+.blueprint-builder__form-group--position {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.blueprint-builder__input--number {
+  width: 100%;
+}
+
 /* Split View Layout */
 .blueprint-builder__split-view {
   display: flex;
@@ -287,6 +303,13 @@
   font-weight: 700;
   color: #1E293B; /* slate-800 */
   margin-bottom: 0.5rem;
+}
+
+.field-card__position {
+  font-size: 0.75rem; /* 12px */
+  color: #64748B; /* slate-500 */
+  margin-bottom: 0.5rem;
+  font-style: italic;
 }
 
 .field-card__delete-btn {

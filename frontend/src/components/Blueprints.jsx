@@ -30,6 +30,8 @@ const Blueprints = () => {
   const [fetchingBlueprint, setFetchingBlueprint] = useState(isEditMode);
   const [selectedFieldType, setSelectedFieldType] = useState('text');
   const [fieldLabel, setFieldLabel] = useState('');
+  const [fieldX, setFieldX] = useState(0);
+  const [fieldY, setFieldY] = useState(0);
 
   const fieldTypes = [
     { value: 'text', label: 'Text', icon: Type },
@@ -112,11 +114,13 @@ const Blueprints = () => {
     const newField = {
       label: fieldLabel.trim(),
       fieldType: selectedFieldType,
-      position: { x: 0, y: 0 },
+      position: { x: fieldX, y: fieldY },
     };
 
     setFields((prev) => [...prev, newField]);
     setFieldLabel('');
+    setFieldX(0);
+    setFieldY(0);
     toast.success('Field added successfully');
   };
 
@@ -255,6 +259,36 @@ const Blueprints = () => {
                 />
               </div>
 
+              <div className="blueprint-builder__position-group">
+                <div className="blueprint-builder__form-group blueprint-builder__form-group--position">
+                  <label htmlFor="field-x" className="blueprint-builder__label">
+                    X Position
+                  </label>
+                  <input
+                    id="field-x"
+                    type="number"
+                    value={fieldX}
+                    onChange={(e) => setFieldX(Number(e.target.value) || 0)}
+                    min="0"
+                    className="blueprint-builder__input blueprint-builder__input--number"
+                  />
+                </div>
+
+                <div className="blueprint-builder__form-group blueprint-builder__form-group--position">
+                  <label htmlFor="field-y" className="blueprint-builder__label">
+                    Y Position
+                  </label>
+                  <input
+                    id="field-y"
+                    type="number"
+                    value={fieldY}
+                    onChange={(e) => setFieldY(Number(e.target.value) || 0)}
+                    min="0"
+                    className="blueprint-builder__input blueprint-builder__input--number"
+                  />
+                </div>
+              </div>
+
               <button onClick={handleAddField} className="btn btn--secondary">
                 <Plus size={18} />
                 <span>Add Field</span>
@@ -291,6 +325,9 @@ const Blueprints = () => {
                       </button>
 
                       <label className="field-card__label">{field.label}</label>
+                      <div className="field-card__position">
+                        Pos: {field.position?.x || 0}, {field.position?.y || 0}
+                      </div>
                       {renderMockInput(field.fieldType)}
                     </motion.div>
                   ))}

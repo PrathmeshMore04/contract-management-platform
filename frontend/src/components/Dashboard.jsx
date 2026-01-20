@@ -36,6 +36,11 @@ const Dashboard = () => {
     let filtered = [...contracts];
 
     switch (filter) {
+      case 'active':
+        filtered = contracts.filter(
+          contract => contract?.status !== 'Locked' && contract?.status !== 'Revoked'
+        );
+        break;
       case 'pending':
         filtered = contracts.filter(
           contract => contract?.status === 'Created' || 
@@ -214,7 +219,7 @@ const Dashboard = () => {
       <div className="dashboard__filters">
         <Filter className="dashboard__filter-icon" size={20} />
         <div className="dashboard__filter-buttons">
-          {['all', 'pending', 'signed'].map((filterOption) => (
+          {['all', 'active', 'pending', 'signed'].map((filterOption) => (
             <button
               key={filterOption}
               onClick={() => setFilter(filterOption)}
