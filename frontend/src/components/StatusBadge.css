@@ -41,6 +41,14 @@
   box-shadow: 0 1px 3px 0 rgba(5, 150, 105, 0.2); /* Enhanced shadow for success state */
 }
 
+/* Status: Locked - Gray/Slate (Finalized state) */
+.status-badge--locked {
+  background-color: #F1F5F9; /* gray-100 / slate-100 */
+  color: #334155; /* gray-700 / slate-700 */
+  border-color: #CBD5E1; /* gray-300 / slate-300 */
+  box-shadow: 0 1px 3px 0 rgba(51, 65, 85, 0.2); /* Enhanced shadow for finalized state */
+}
+
 /* Status: Revoked - Red (Danger state) */
 .status-badge--revoked {
   background-color: #FEE2E2; /* red-100 */

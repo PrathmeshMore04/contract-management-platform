@@ -6,7 +6,8 @@ const VALID_TRANSITIONS = {
   'Created': ['Approved', 'Revoked'],
   'Approved': ['Sent'],
   'Sent': ['Signed', 'Revoked'],
-  'Signed': [], // Immutable - no transitions allowed
+  'Signed': ['Locked'], // Can transition to Locked
+  'Locked': [], // Immutable - no transitions allowed
   'Revoked': [] // Immutable - no transitions allowed
 };
 
@@ -22,7 +23,7 @@ const isValidTransition = (currentStatus, newStatus) => {
 
 // Helper function to check if contract is immutable
 const isImmutable = (status) => {
-  return status === 'Signed' || status === 'Revoked';
+  return status === 'Locked' || status === 'Revoked';
 };
 
 // @desc    Create a new contract
@@ -117,7 +118,7 @@ const updateContractStatus = async (req, res) => {
     }
 
     // Validate status is a valid enum value
-    const validStatuses = ['Created', 'Approved', 'Sent', 'Signed', 'Revoked'];
+    const validStatuses = ['Created', 'Approved', 'Sent', 'Signed', 'Locked', 'Revoked'];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({
         success: false,

@@ -9,7 +9,7 @@ const contractSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Created', 'Approved', 'Sent', 'Signed', 'Revoked'],
+    enum: ['Created', 'Approved', 'Sent', 'Signed', 'Locked', 'Revoked'],
     default: 'Created'
   },
   // Store the values entered for blueprint fields

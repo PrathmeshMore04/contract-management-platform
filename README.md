@@ -30,16 +30,17 @@ A full-stack Contract Management Platform built with MERN stack (MongoDB, Expres
 - Persistent contract data storage
 
 ### 3. Contract Lifecycle Management
-- Strict state machine enforcement: `Created → Approved → Sent → Signed`
+- Strict state machine enforcement: `Created → Approved → Sent → Signed → Locked`
 - Revocation allowed at `Created` or `Sent` stages
 - Backend-enforced transitions (invalid transitions rejected)
-- Locked contracts (`Signed`/`Revoked`) are immutable
+- **Locked** is the final immutable state (no further transitions allowed)
+- **Revoked** contracts are also immutable
 - Frontend reflects current status and allowed actions
 
 ### 4. Dashboard & Contract Listing
 - Table view showing all contracts
 - Displays: Contract name, Blueprint name, Status, Created date
-- Filter contracts by: All, Active, Signed
+- Filter contracts by: All, Pending (Created/Approved/Sent), Signed
 - Action buttons based on current contract status
 
 ## 🛠 Tech Stack
@@ -267,6 +268,21 @@ PATCH /api/contracts/507f1f77bcf86cd799439012/status
 }
 ```
 
+**Contract Lifecycle Flow:**
+```
+Created → Approved → Sent → Signed → Locked
+   ↓         ↓         ↓
+Revoked   Revoked   Revoked
+```
+
+**Valid Transitions:**
+- `Created` → `Approved` or `Revoked`
+- `Approved` → `Sent`
+- `Sent` → `Signed` or `Revoked`
+- `Signed` → `Locked`
+- `Locked` → **No transitions allowed (final immutable state)**
+- `Revoked` → **No transitions allowed (immutable state)**
+
 ### Response Format
 
 **Success Response**:
@@ -316,12 +332,20 @@ PATCH /api/contracts/507f1f77bcf86cd799439012/status
 ```javascript
 {
   blueprintId: ObjectId (required, ref: 'Blueprint'),
-  status: String (enum: 'Created', 'Approved', 'Sent', 'Signed', 'Revoked', default: 'Created'),
+  status: String (enum: 'Created', 'Approved', 'Sent', 'Signed', 'Locked', 'Revoked', default: 'Created'),
   data: Map (key-value pairs for field values),
   createdAt: Date (auto),
   updatedAt: Date (auto)
 }
 ```
+
+**Contract Lifecycle States:**
+- `Created` → Initial state when contract is created
+- `Approved` → Contract has been approved for sending
+- `Sent` → Contract has been sent to signatory
+- `Signed` → Contract has been signed (can transition to Locked)
+- `Locked` → **Final immutable state** - contract is locked and cannot be modified
+- `Revoked` → Contract has been revoked (immutable state)
 
 ### Relationships
 - **Contract → Blueprint**: One-to-Many (many contracts can use one blueprint)

@@ -11,6 +11,8 @@ const StatusBadge = ({ status = 'Created' }) => {
         return 'sent';
       case 'Signed':
         return 'signed';
+      case 'Locked':
+        return 'locked';
       case 'Revoked':
         return 'revoked';
       default:

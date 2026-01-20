@@ -36,9 +36,11 @@ const Dashboard = () => {
     let filtered = [...contracts];
 
     switch (filter) {
-      case 'active':
+      case 'pending':
         filtered = contracts.filter(
-          contract => contract?.status !== 'Signed' && contract?.status !== 'Revoked'
+          contract => contract?.status === 'Created' || 
+                     contract?.status === 'Approved' || 
+                     contract?.status === 'Sent'
         );
         break;
       case 'signed':
@@ -88,7 +90,11 @@ const Dashboard = () => {
   // Calculate stats
   const stats = {
     total: contracts.length,
-    active: contracts.filter(c => c?.status !== 'Signed' && c?.status !== 'Revoked').length,
+    pending: contracts.filter(c => 
+      c?.status === 'Created' || 
+      c?.status === 'Approved' || 
+      c?.status === 'Sent'
+    ).length,
     signed: contracts.filter(c => c?.status === 'Signed').length,
   };
 
@@ -107,6 +113,10 @@ const Dashboard = () => {
           { label: 'Revoke', nextStatus: 'Revoked', variant: 'danger' },
         ];
       case 'Signed':
+        return [
+          { label: 'Lock', nextStatus: 'Locked', variant: 'secondary' },
+        ];
+      case 'Locked':
       case 'Revoked':
       default:
         return [];
@@ -121,6 +131,8 @@ const Dashboard = () => {
         return 'action-btn action-btn--success';
       case 'danger':
         return 'action-btn action-btn--danger';
+      case 'secondary':
+        return 'action-btn action-btn--secondary';
       default:
         return 'action-btn action-btn--primary';
     }
@@ -170,8 +182,8 @@ const Dashboard = () => {
           >
             <div className="stat-card__content">
               <div className="stat-card__info">
-                <p className="stat-card__label">Active</p>
-                <p className="stat-card__value">{stats.active}</p>
+                <p className="stat-card__label">Pending</p>
+                <p className="stat-card__value">{stats.pending}</p>
               </div>
               <div className="stat-card__icon stat-card__icon--amber">
                 <Activity size={24} />
@@ -202,7 +214,7 @@ const Dashboard = () => {
       <div className="dashboard__filters">
         <Filter className="dashboard__filter-icon" size={20} />
         <div className="dashboard__filter-buttons">
-          {['all', 'active', 'signed'].map((filterOption) => (
+          {['all', 'pending', 'signed'].map((filterOption) => (
             <button
               key={filterOption}
               onClick={() => setFilter(filterOption)}

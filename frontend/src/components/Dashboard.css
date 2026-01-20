@@ -297,6 +297,16 @@
   box-shadow: 0 2px 4px 0 rgba(220, 38, 38, 0.3); /* Enhanced shadow on hover */
 }
 
+.action-btn--secondary {
+  background-color: #64748B; /* slate-500 */
+  border: 1px solid transparent;
+}
+
+.action-btn--secondary:hover:not(:disabled) {
+  background-color: #475569; /* slate-600 */
+  box-shadow: 0 2px 4px 0 rgba(71, 85, 105, 0.2);
+}
+
 /* Empty State */
 .dashboard__empty {
   text-align: center;
