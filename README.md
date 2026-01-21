@@ -111,12 +111,12 @@ A full-stack Contract Management Platform built with MERN stack (MongoDB, Expres
     │ Layout  │
     └───┬─────┘
         │
-   ┌────┴────┐
-   │ Pages   │
-   │ - Dashboard
-   │ - Blueprints
-   │ - Create Contract
-   └────┬────┘
+   ┌────┴───────────────┐
+   │ Pages              │
+   │ - Dashboard        │
+   │ - Blueprints       │
+   │ - Create Contract  │
+   └────┬───────────────┘
         │
    ┌────┴────┐
    │ Services│
