@@ -71,12 +71,48 @@ const createContract = async (req, res) => {
       });
     }
 
+    // Server-side validation against blueprint fields
+    const incomingData = (data && typeof data === 'object') ? data : {};
+    const validatedData = {};
+
+    const fields = Array.isArray(blueprint.fields) ? blueprint.fields : [];
+    for (const field of fields) {
+      if (!field || !field.label) continue;
+
+      const key = field.label;
+      const hasKey = Object.prototype.hasOwnProperty.call(incomingData, key);
+      const value = incomingData[key];
+
+      // Enforce required fields when blueprint defines required=true
+      // Note: blueprint field schema may not include `required`; if absent, treated as optional.
+      const isRequired = field.required === true;
+      if (isRequired) {
+        const isMissing =
+          !hasKey ||
+          value === null ||
+          value === undefined ||
+          (field.fieldType === 'checkbox' ? value !== true : String(value).trim().length === 0);
+
+        if (isMissing) {
+          return res.status(400).json({
+            success: false,
+            message: `Missing required field: ${key}`
+          });
+        }
+      }
+
+      // Only allow fields that exist in blueprint to be saved (strip unknown fields)
+      if (hasKey) {
+        validatedData[key] = value;
+      }
+    }
+
     const changedBy = req.user?.role || req.user?.id || 'system';
 
     // Create contract with default status 'Created' and initialize history
     const contract = await Contract.create({
       blueprintId,
-      data: data || {},
+      data: validatedData,
       history: [
         {
           status: 'Created',
