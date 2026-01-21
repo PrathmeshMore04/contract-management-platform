@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-// Create base Axios instance pointing to backend
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
   headers: {
@@ -8,24 +7,16 @@ const api = axios.create({
   }
 });
 
-// Get current user role from localStorage (default to 'admin')
 const getUserRole = () => {
   return localStorage.getItem('userRole') || 'admin';
 };
 
-// Add request interceptor to include user role header
 api.interceptors.request.use((config) => {
   const userRole = getUserRole();
   config.headers['x-user-role'] = userRole;
   return config;
 });
 
-// Blueprint API functions
-
-/**
- * Get all blueprints
- * @returns {Promise} Response with blueprints array
- */
 export const getBlueprints = async () => {
   try {
     const response = await api.get('/blueprints');
@@ -35,11 +26,6 @@ export const getBlueprints = async () => {
   }
 };
 
-/**
- * Get a single blueprint by ID
- * @param {string} blueprintId - ID of the blueprint to retrieve
- * @returns {Promise} Response with blueprint data
- */
 export const getBlueprintById = async (blueprintId) => {
   try {
     const response = await api.get(`/blueprints/${blueprintId}`);
@@ -49,13 +35,6 @@ export const getBlueprintById = async (blueprintId) => {
   }
 };
 
-/**
- * Create a new blueprint
- * @param {Object} blueprintData - Blueprint data with name and fields
- * @param {string} blueprintData.name - Blueprint name
- * @param {Array} blueprintData.fields - Array of field objects
- * @returns {Promise} Response with created blueprint
- */
 export const createBlueprint = async (blueprintData) => {
   try {
     const response = await api.post('/blueprints', blueprintData);
@@ -65,14 +44,6 @@ export const createBlueprint = async (blueprintData) => {
   }
 };
 
-/**
- * Update an existing blueprint
- * @param {string} blueprintId - ID of the blueprint to update
- * @param {Object} blueprintData - Blueprint data with name and fields
- * @param {string} blueprintData.name - Blueprint name
- * @param {Array} blueprintData.fields - Array of field objects
- * @returns {Promise} Response with updated blueprint
- */
 export const updateBlueprint = async (blueprintId, blueprintData) => {
   try {
     const response = await api.put(`/blueprints/${blueprintId}`, blueprintData);
@@ -82,11 +53,6 @@ export const updateBlueprint = async (blueprintId, blueprintData) => {
   }
 };
 
-/**
- * Delete a blueprint by ID
- * @param {string} blueprintId - ID of the blueprint to delete
- * @returns {Promise} Response with deletion confirmation
- */
 export const deleteBlueprint = async (blueprintId) => {
   try {
     const response = await api.delete(`/blueprints/${blueprintId}`);
@@ -96,12 +62,6 @@ export const deleteBlueprint = async (blueprintId) => {
   }
 };
 
-// Contract API functions
-
-/**
- * Get all contracts
- * @returns {Promise} Response with contracts array
- */
 export const getContracts = async () => {
   try {
     const response = await api.get('/contracts');
@@ -111,13 +71,6 @@ export const getContracts = async () => {
   }
 };
 
-/**
- * Create a new contract
- * @param {Object} contractData - Contract data
- * @param {string} contractData.blueprintId - ID of the blueprint to use
- * @param {Object} contractData.data - Field values (optional)
- * @returns {Promise} Response with created contract
- */
 export const createContract = async (contractData) => {
   try {
     const response = await api.post('/contracts', contractData);
@@ -127,12 +80,6 @@ export const createContract = async (contractData) => {
   }
 };
 
-/**
- * Update contract status
- * @param {string} contractId - ID of the contract to update
- * @param {string} status - New status (Created, Approved, Sent, Signed, Revoked)
- * @returns {Promise} Response with updated contract
- */
 export const updateContractStatus = async (contractId, status) => {
   try {
     const response = await api.patch(`/contracts/${contractId}/status`, { status });

@@ -39,9 +39,6 @@ const hasPermissionForStatus = (userRole, targetStatus) => {
   return false;
 };
 
-// @desc    Create a new contract
-// @route   POST /api/contracts
-// @access  Public (with mock auth)
 const createContract = async (req, res) => {
   try {
     const { blueprintId, data } = req.body;
@@ -132,9 +129,6 @@ const createContract = async (req, res) => {
   }
 };
 
-// @desc    Get all contracts
-// @route   GET /api/contracts
-// @access  Public (with mock auth)
 const getAllContracts = async (req, res) => {
   try {
     const contracts = await Contract.find()
@@ -155,9 +149,6 @@ const getAllContracts = async (req, res) => {
   }
 };
 
-// @desc    Update contract status
-// @route   PATCH /api/contracts/:id/status
-// @access  Public (with mock auth)
 const updateContractStatus = async (req, res) => {
   try {
     const { id } = req.params;

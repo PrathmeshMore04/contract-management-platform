@@ -22,7 +22,6 @@ const SkeletonLoader = ({ count = 3, className = '' }) => {
   );
 };
 
-// Table Row Skeleton
 export const TableRowSkeleton = ({ columns = 5 }) => {
   return (
     <div className="table-row-skeleton">
@@ -53,7 +52,6 @@ export const TableRowSkeleton = ({ columns = 5 }) => {
   );
 };
 
-// Card Skeleton
 export const CardSkeleton = () => {
   return (
     <motion.div
@@ -77,7 +75,6 @@ export const CardSkeleton = () => {
   );
 };
 
-// Field Skeleton (for forms)
 export const FieldSkeleton = () => {
   return (
     <motion.div

@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// Field schema for blueprint fields
 const fieldSchema = new mongoose.Schema({
   label: {
     type: String,
@@ -23,7 +22,6 @@ const fieldSchema = new mongoose.Schema({
   }
 }, { _id: false });
 
-// Blueprint Schema
 const blueprintSchema = new mongoose.Schema({
   name: {
     type: String,

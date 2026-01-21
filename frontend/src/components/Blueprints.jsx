@@ -18,11 +18,9 @@ const Blueprints = () => {
     return 'list';
   }, [location.pathname]);
 
-  // Shared list state
   const [blueprints, setBlueprints] = useState([]);
   const [loadingList, setLoadingList] = useState(mode === 'list');
 
-  // Builder state (new/edit)
   const isEditMode = mode === 'edit';
   const [blueprintName, setBlueprintName] = useState('');
   const [fields, setFields] = useState([]);
@@ -52,15 +50,12 @@ const Blueprints = () => {
     }
   };
 
-  // List view: fetch on mount
   useEffect(() => {
     if (mode === 'list') {
       fetchBlueprints();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode]);
 
-  // Edit view: load blueprint by id
   useEffect(() => {
     if (mode !== 'edit' || !id) return;
 
@@ -359,7 +354,6 @@ const Blueprints = () => {
     );
   }
 
-  // List view
   return (
     <div className="blueprints-list">
       <div className="blueprints-list__header">

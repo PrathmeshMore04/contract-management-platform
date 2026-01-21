@@ -32,16 +32,13 @@ const Layout = ({ children }) => {
 
   return (
     <div className="app-layout">
-      {/* Top Navigation Bar */}
       <nav className="app-nav">
         <div className="app-nav__container">
           <div className="app-nav__content">
-            {/* Logo */}
             <div className="app-nav__logo">
               <h1 className="app-nav__logo-text">ContractFlow</h1>
             </div>
 
-            {/* Navigation Tabs */}
             <div className="app-nav__tabs">
               {navigation.map((item) => {
                 const Icon = item.icon;
@@ -69,7 +66,6 @@ const Layout = ({ children }) => {
         </div>
       </nav>
 
-      {/* Main Content Area */}
       <main className="app-main">
         {children}
       </main>

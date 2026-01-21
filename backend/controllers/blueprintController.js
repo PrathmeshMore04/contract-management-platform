@@ -1,13 +1,9 @@
 const Blueprint = require('../models/Blueprint');
 
-// @desc    Create a new blueprint
-// @route   POST /api/blueprints
-// @access  Public (with mock auth)
 const createBlueprint = async (req, res) => {
   try {
     const { name, fields } = req.body;
 
-    // Validation
     if (!name) {
       return res.status(400).json({ message: 'Blueprint name is required' });
     }
@@ -45,9 +41,6 @@ const createBlueprint = async (req, res) => {
   }
 };
 
-// @desc    Get all blueprints
-// @route   GET /api/blueprints
-// @access  Public (with mock auth)
 const getAllBlueprints = async (req, res) => {
   try {
     const blueprints = await Blueprint.find().sort({ createdAt: -1 });
@@ -66,9 +59,6 @@ const getAllBlueprints = async (req, res) => {
   }
 };
 
-// @desc    Get a single blueprint by ID
-// @route   GET /api/blueprints/:id
-// @access  Public (with mock auth)
 const getBlueprintById = async (req, res) => {
   try {
     const blueprint = await Blueprint.findById(req.params.id);
@@ -99,9 +89,6 @@ const getBlueprintById = async (req, res) => {
   }
 };
 
-// @desc    Update a blueprint by ID
-// @route   PUT /api/blueprints/:id
-// @access  Public (with mock auth)
 const updateBlueprint = async (req, res) => {
   try {
     const { name, fields } = req.body;
@@ -161,9 +148,6 @@ const updateBlueprint = async (req, res) => {
   }
 };
 
-// @desc    Delete a blueprint by ID
-// @route   DELETE /api/blueprints/:id
-// @access  Public (with mock auth)
 const deleteBlueprint = async (req, res) => {
   try {
     const blueprint = await Blueprint.findByIdAndDelete(req.params.id);

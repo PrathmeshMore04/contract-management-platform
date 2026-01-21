@@ -4,20 +4,14 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger');
 const connectDB = require('./config/db');
 
-// Initialize Express app
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Mock Authentication Middleware
-// Attaches a mock user to every request
-// Accepts x-user-role header to simulate different user roles
 app.use((req, res, next) => {
   const userRole = req.headers['x-user-role'] || 'admin';
   
-  // Map role to user details
   const roleMap = {
     admin: { id: 'admin_user', name: 'Admin', role: 'admin' },
     approver: { id: 'approver_user', name: 'Approver', role: 'approver' },
@@ -28,7 +22,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Basic route for health check
 app.get('/', (req, res) => {
   res.json({ 
     message: 'Contract Management Platform API',
@@ -36,17 +29,14 @@ app.get('/', (req, res) => {
   });
 });
 
-// Swagger API Documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
   customCss: '.swagger-ui .topbar { display: none }',
   customSiteTitle: 'Contract Management Platform API Documentation'
 }));
 
-// API Routes
 app.use('/api/blueprints', require('./routes/blueprints'));
 app.use('/api/contracts', require('./routes/contracts'));
 
-// Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(err.status || 500).json({
@@ -55,7 +45,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 404 handler
 app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });

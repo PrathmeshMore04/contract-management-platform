@@ -17,12 +17,10 @@ const Dashboard = () => {
     return localStorage.getItem('userRole') || 'admin';
   });
 
-  // Fetch contracts on mount and when role changes
   useEffect(() => {
     fetchContracts();
   }, [userRole]);
 
-  // Handle role change (mock login)
   const handleRoleChange = (newRole) => {
     setUserRole(newRole);
     localStorage.setItem('userRole', newRole);
@@ -42,7 +40,6 @@ const Dashboard = () => {
     }
   };
 
-  // Apply filter when contracts or filter changes
   useEffect(() => {
     let filtered = [...contracts];
 
@@ -71,7 +68,6 @@ const Dashboard = () => {
     setFilteredContracts(filtered);
   }, [contracts, filter]);
 
-  // Handle status update
   const handleStatusUpdate = async (contractId, newStatus) => {
     setUpdatingStatus(contractId);
 
@@ -87,12 +83,10 @@ const Dashboard = () => {
     }
   };
 
-  // Get contract name
   const getContractName = (contract) => {
     return contract.contractName || `Contract-${contract._id?.slice(-6) || 'N/A'}`;
   };
 
-  // Format date
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
@@ -103,7 +97,6 @@ const Dashboard = () => {
     });
   };
 
-  // Calculate stats
   const stats = {
     total: contracts.length,
     pending: contracts.filter(c => 
@@ -114,19 +107,15 @@ const Dashboard = () => {
     signed: contracts.filter(c => c?.status === 'Signed').length,
   };
 
-  // Check if user has permission for a status transition
   const hasPermissionForStatus = (targetStatus) => {
-    // Admin has all permissions
     if (userRole === 'admin') {
       return true;
     }
 
-    // Approver can transition to 'Approved' or 'Sent'
     if (userRole === 'approver') {
       return targetStatus === 'Approved' || targetStatus === 'Sent';
     }
 
-    // Signer can transition to 'Signed'
     if (userRole === 'signer') {
       return targetStatus === 'Signed';
     }
@@ -142,7 +131,6 @@ const Dashboard = () => {
         if (hasPermissionForStatus('Approved')) {
           allActions.push({ label: 'Approve', nextStatus: 'Approved', variant: 'primary' });
         }
-        // Revoke can be done by admin (handled by permission check)
         if (userRole === 'admin') {
           allActions.push({ label: 'Revoke', nextStatus: 'Revoked', variant: 'danger' });
         }
@@ -156,13 +144,11 @@ const Dashboard = () => {
         if (hasPermissionForStatus('Signed')) {
           allActions.push({ label: 'Sign', nextStatus: 'Signed', variant: 'success' });
         }
-        // Revoke can be done by admin
         if (userRole === 'admin') {
           allActions.push({ label: 'Revoke', nextStatus: 'Revoked', variant: 'danger' });
         }
         break;
       case 'Signed':
-        // Lock can be done by admin
         if (userRole === 'admin') {
           allActions.push({ label: 'Lock', nextStatus: 'Locked', variant: 'secondary' });
         }
@@ -193,14 +179,12 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
-      {/* Header */}
       <div className="dashboard__header">
         <div>
           <h1 className="dashboard__title">Dashboard</h1>
           <p className="dashboard__subtitle">Manage and track your contracts</p>
         </div>
         
-        {/* Role Selector (Mock Login) */}
         <div className="dashboard__role-selector">
           <div className="role-selector">
             <User size={18} className="role-selector__icon" />
@@ -218,7 +202,6 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Stats Cards */}
       {loading ? (
         <div className="dashboard__stats">
           <CardSkeleton />
@@ -280,7 +263,6 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Filters */}
       <div className="dashboard__filters">
         <Filter className="dashboard__filter-icon" size={20} />
         <div className="dashboard__filter-buttons">
@@ -299,10 +281,8 @@ const Dashboard = () => {
         </span>
       </div>
 
-      {/* Contracts Table */}
       {loading ? (
         <div className="contracts-table">
-          {/* Table Header Skeleton */}
           <div className="contracts-table__header">
             <div className="contracts-table__header-cell contracts-table__header-cell--name">
               <div className="skeleton skeleton--header" />
@@ -320,7 +300,6 @@ const Dashboard = () => {
               <div className="skeleton skeleton--header" />
             </div>
           </div>
-          {/* Skeleton Rows */}
           <div className="contracts-table__body">
             <TableRowSkeleton columns={5} />
             <TableRowSkeleton columns={5} />
@@ -341,7 +320,6 @@ const Dashboard = () => {
         </div>
       ) : (
         <div className="contracts-table">
-          {/* Table Header */}
           <div className="contracts-table__header">
             <div className="contracts-table__header-cell contracts-table__header-cell--name">
               <p>Contract Name</p>
@@ -360,7 +338,6 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Table Rows */}
           <div className="contracts-table__body">
             {filteredContracts.map((contract, index) => {
               const currentStatus = contract?.status || 'Created';

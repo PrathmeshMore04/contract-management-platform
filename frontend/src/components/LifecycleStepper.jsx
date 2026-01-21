@@ -15,7 +15,6 @@ const LifecycleStepper = ({ currentStatus = 'Created' }) => {
   return (
     <div className="lifecycle-stepper">
       <div className="lifecycle-stepper__container">
-        {/* Progress Line */}
         <div className="lifecycle-stepper__progress-line">
           <div
             className="lifecycle-stepper__progress-fill"
@@ -23,7 +22,6 @@ const LifecycleStepper = ({ currentStatus = 'Created' }) => {
           />
         </div>
 
-        {/* Steps */}
         {steps.map((step, index) => {
           const isCompleted = index <= currentIndex;
           const isCurrent = index === currentIndex;
