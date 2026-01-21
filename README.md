@@ -205,11 +205,6 @@ A full-stack Contract Management Platform built with MERN stack (MongoDB, Expres
 
 ## 📡 API Design
 
-### Base URL
-```
-http://localhost:5000/api
-```
-
 ### Blueprint Endpoints
 
 | Method | Endpoint | Description | Request Body |
