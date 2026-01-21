@@ -8,6 +8,18 @@ const api = axios.create({
   }
 });
 
+// Get current user role from localStorage (default to 'admin')
+const getUserRole = () => {
+  return localStorage.getItem('userRole') || 'admin';
+};
+
+// Add request interceptor to include user role header
+api.interceptors.request.use((config) => {
+  const userRole = getUserRole();
+  config.headers['x-user-role'] = userRole;
+  return config;
+});
+
 // Blueprint API functions
 
 /**

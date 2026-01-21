@@ -26,6 +26,27 @@ const isImmutable = (status) => {
   return status === 'Locked' || status === 'Revoked';
 };
 
+// Helper function to check if user has permission for status transition
+const hasPermissionForStatus = (userRole, targetStatus) => {
+  // Admin has all permissions
+  if (userRole === 'admin') {
+    return true;
+  }
+
+  // Approver can transition to 'Approved' or 'Sent'
+  if (userRole === 'approver') {
+    return targetStatus === 'Approved' || targetStatus === 'Sent';
+  }
+
+  // Signer can transition to 'Signed'
+  if (userRole === 'signer') {
+    return targetStatus === 'Signed';
+  }
+
+  // Default: no permission
+  return false;
+};
+
 // @desc    Create a new contract
 // @route   POST /api/contracts
 // @access  Public (with mock auth)
@@ -148,6 +169,15 @@ const updateContractStatus = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: `Invalid transition from '${contract.status}' to '${status}'`
+      });
+    }
+
+    // Check role-based permissions
+    const userRole = req.user?.role || 'admin';
+    if (!hasPermissionForStatus(userRole, status)) {
+      return res.status(403).json({
+        success: false,
+        message: `You do not have permission to transition contracts to '${status}'. Required role: ${status === 'Approved' || status === 'Sent' ? 'approver' : status === 'Signed' ? 'signer' : 'admin'}`
       });
     }
 

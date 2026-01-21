@@ -143,18 +143,24 @@
 
 /* Contract Form */
 .contract-document__form {
-  display: flex;
-  flex-direction: column;
-  gap: 3rem; /* 48px - increased from 40px for more white space */
+  position: relative;
+  height: 800px; /* Fixed height representing paper sheet */
+  width: 100%;
+  background-color: #FFFFFF;
+  border: 1px solid #E5E7EB; /* gray-200 */
+  border-radius: 0.5rem; /* 8px */
+  padding: 2rem; /* 32px padding for the container */
+  overflow: visible; /* Allow fields to be positioned outside if needed */
+  box-sizing: border-box; /* Include padding in height calculation */
 }
 
 /* Contract Field */
 .contract-field {
   display: flex;
   flex-direction: column;
-  gap: 1rem; /* 16px - increased from 12px for better spacing */
-  padding-bottom: 1rem; /* 16px - additional bottom padding */
-  margin-bottom: 0.5rem; /* 8px - margin between fields */
+  gap: 0.5rem; /* 8px */
+  min-width: 200px; /* Minimum width for fields */
+  max-width: 300px; /* Maximum width to prevent fields from being too wide */
 }
 
 .contract-field__label {
@@ -255,9 +261,14 @@
 
 /* Document Actions */
 .contract-document__actions {
-  padding-top: 2.5rem; /* 40px - increased from 32px */
-  margin-top: 4rem; /* 64px - increased from 48px for more separation */
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 2rem; /* 32px */
   border-top: 1px solid #E5E7EB; /* gray-200 */
+  background-color: #FFFFFF; /* Ensure button area has background */
+  box-sizing: border-box;
 }
 
 /* Buttons (shared .btn styles live in src/index.css) */

@@ -10,6 +10,53 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.dashboard__role-selector {
+  display: flex;
+  align-items: center;
+}
+
+/* Role Selector */
+.role-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* 8px */
+  padding: 0.5rem 1rem; /* 8px 16px */
+  background-color: #F9FAFB; /* gray-50 */
+  border: 1px solid #E5E7EB; /* gray-200 */
+  border-radius: 0.5rem; /* 8px */
+}
+
+.role-selector__icon {
+  color: #6B7280; /* gray-500 */
+}
+
+.role-selector__label {
+  font-size: 0.875rem; /* 14px */
+  font-weight: 500;
+  color: #374151; /* gray-700 */
+}
+
+.role-selector__select {
+  padding: 0.375rem 0.75rem; /* 6px 12px */
+  border: 1px solid #D1D5DB; /* gray-300 */
+  border-radius: 0.375rem; /* 6px */
+  font-size: 0.875rem; /* 14px */
+  font-family: inherit;
+  background-color: #FFFFFF;
+  color: #1F2937; /* gray-800 */
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  min-width: 100px;
+}
+
+.role-selector__select:focus {
+  outline: none;
+  border-color: #4F46E5; /* primary */
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
 .dashboard__title {

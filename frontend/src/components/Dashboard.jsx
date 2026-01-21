@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, Activity, CheckCircle2, Filter, Lock } from 'lucide-react';
+import { FileText, Activity, CheckCircle2, Filter, Lock, User, LogOut } from 'lucide-react';
 import { getContracts, updateContractStatus } from '../services/api';
 import toast from 'react-hot-toast';
 import StatusBadge from './StatusBadge';
@@ -13,11 +13,22 @@ const Dashboard = () => {
   const [filter, setFilter] = useState('all');
   const [loading, setLoading] = useState(true);
   const [updatingStatus, setUpdatingStatus] = useState(null);
+  const [userRole, setUserRole] = useState(() => {
+    return localStorage.getItem('userRole') || 'admin';
+  });
 
-  // Fetch contracts on mount
+  // Fetch contracts on mount and when role changes
   useEffect(() => {
     fetchContracts();
-  }, []);
+  }, [userRole]);
+
+  // Handle role change (mock login)
+  const handleRoleChange = (newRole) => {
+    setUserRole(newRole);
+    localStorage.setItem('userRole', newRole);
+    toast.success(`Switched to ${newRole.charAt(0).toUpperCase() + newRole.slice(1)} view`);
+    fetchContracts(); // Refresh contracts with new role
+  };
 
   const fetchContracts = async () => {
     try {
@@ -103,29 +114,66 @@ const Dashboard = () => {
     signed: contracts.filter(c => c?.status === 'Signed').length,
   };
 
+  // Check if user has permission for a status transition
+  const hasPermissionForStatus = (targetStatus) => {
+    // Admin has all permissions
+    if (userRole === 'admin') {
+      return true;
+    }
+
+    // Approver can transition to 'Approved' or 'Sent'
+    if (userRole === 'approver') {
+      return targetStatus === 'Approved' || targetStatus === 'Sent';
+    }
+
+    // Signer can transition to 'Signed'
+    if (userRole === 'signer') {
+      return targetStatus === 'Signed';
+    }
+
+    return false;
+  };
+
   const getActionsForStatus = (currentStatus) => {
+    const allActions = [];
+    
     switch (currentStatus) {
       case 'Created':
-        return [
-          { label: 'Approve', nextStatus: 'Approved', variant: 'primary' },
-          { label: 'Revoke', nextStatus: 'Revoked', variant: 'danger' },
-        ];
+        if (hasPermissionForStatus('Approved')) {
+          allActions.push({ label: 'Approve', nextStatus: 'Approved', variant: 'primary' });
+        }
+        // Revoke can be done by admin (handled by permission check)
+        if (userRole === 'admin') {
+          allActions.push({ label: 'Revoke', nextStatus: 'Revoked', variant: 'danger' });
+        }
+        break;
       case 'Approved':
-        return [{ label: 'Send', nextStatus: 'Sent', variant: 'primary' }];
+        if (hasPermissionForStatus('Sent')) {
+          allActions.push({ label: 'Send', nextStatus: 'Sent', variant: 'primary' });
+        }
+        break;
       case 'Sent':
-        return [
-          { label: 'Sign', nextStatus: 'Signed', variant: 'success' },
-          { label: 'Revoke', nextStatus: 'Revoked', variant: 'danger' },
-        ];
+        if (hasPermissionForStatus('Signed')) {
+          allActions.push({ label: 'Sign', nextStatus: 'Signed', variant: 'success' });
+        }
+        // Revoke can be done by admin
+        if (userRole === 'admin') {
+          allActions.push({ label: 'Revoke', nextStatus: 'Revoked', variant: 'danger' });
+        }
+        break;
       case 'Signed':
-        return [
-          { label: 'Lock', nextStatus: 'Locked', variant: 'secondary' },
-        ];
+        // Lock can be done by admin
+        if (userRole === 'admin') {
+          allActions.push({ label: 'Lock', nextStatus: 'Locked', variant: 'secondary' });
+        }
+        break;
       case 'Locked':
       case 'Revoked':
       default:
-        return [];
+        break;
     }
+
+    return allActions;
   };
 
   const getActionButtonClass = (variant) => {
@@ -150,6 +198,23 @@ const Dashboard = () => {
         <div>
           <h1 className="dashboard__title">Dashboard</h1>
           <p className="dashboard__subtitle">Manage and track your contracts</p>
+        </div>
+        
+        {/* Role Selector (Mock Login) */}
+        <div className="dashboard__role-selector">
+          <div className="role-selector">
+            <User size={18} className="role-selector__icon" />
+            <span className="role-selector__label">Role:</span>
+            <select
+              value={userRole}
+              onChange={(e) => handleRoleChange(e.target.value)}
+              className="role-selector__select"
+            >
+              <option value="admin">Admin</option>
+              <option value="approver">Approver</option>
+              <option value="signer">Signer</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -325,16 +390,22 @@ const Dashboard = () => {
                   <div className="contract-row__cell contract-row__cell--actions">
                     {actions.length > 0 ? (
                       <div className="contract-row__actions">
-                        {actions.map((action) => (
-                          <button
-                            key={`${contract?._id || index}-${action.nextStatus}`}
-                            onClick={() => handleStatusUpdate(contract?._id, action.nextStatus)}
-                            disabled={isUpdating}
-                            className={`${getActionButtonClass(action.variant)} ${isUpdating ? 'action-btn--disabled' : ''}`}
-                          >
-                            {action.label}
-                          </button>
-                        ))}
+                        {actions.map((action) => {
+                          const hasPermission = hasPermissionForStatus(action.nextStatus);
+                          const isDisabled = isUpdating || !hasPermission;
+                          
+                          return (
+                            <button
+                              key={`${contract?._id || index}-${action.nextStatus}`}
+                              onClick={() => handleStatusUpdate(contract?._id, action.nextStatus)}
+                              disabled={isDisabled}
+                              className={`${getActionButtonClass(action.variant)} ${isDisabled ? 'action-btn--disabled' : ''}`}
+                              title={!hasPermission ? `Requires ${action.nextStatus === 'Approved' || action.nextStatus === 'Sent' ? 'Approver' : action.nextStatus === 'Signed' ? 'Signer' : 'Admin'} role` : ''}
+                            >
+                              {action.label}
+                            </button>
+                          );
+                        })}
                       </div>
                     ) : (
                       <span className="contract-row__no-actions">

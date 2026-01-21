@@ -236,23 +236,32 @@ const CreateContract = () => {
 
             {/* Contract Fields */}
             <form onSubmit={handleSubmit} className="contract-document__form">
-              {selectedBlueprint?.fields?.map((field, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="contract-field"
-                >
-                  <label
-                    htmlFor={`field-${index}`}
-                    className="contract-field__label"
+              {selectedBlueprint?.fields?.map((field, index) => {
+                const position = field.position || { x: 0, y: 0 };
+                // Position is already relative to the form container with padding
+                return (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="contract-field"
+                    style={{
+                      position: 'absolute',
+                      left: `${position.x}px`,
+                      top: `${position.y}px`,
+                    }}
                   >
-                    {field.label}
-                  </label>
-                  {renderField(field, isReadOnly)}
-                </motion.div>
-              ))}
+                    <label
+                      htmlFor={`field-${index}`}
+                      className="contract-field__label"
+                    >
+                      {field.label}
+                    </label>
+                    {renderField(field, isReadOnly)}
+                  </motion.div>
+                );
+              })}
 
               {/* Submit Button */}
               {!isReadOnly && (

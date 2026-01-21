@@ -307,30 +307,38 @@ const Blueprints = () => {
             ) : (
               <div className="blueprint-builder__preview-fields">
                 <AnimatePresence>
-                  {fields.map((field, index) => (
-                    <motion.div
-                      key={`${field.label}-${index}`}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ duration: 0.2 }}
-                      className="field-card"
-                    >
-                      <button
-                        onClick={() => handleRemoveField(index)}
-                        className="field-card__delete-btn"
-                        aria-label="Remove field"
+                  {fields.map((field, index) => {
+                    const position = field.position || { x: 0, y: 0 };
+                    return (
+                      <motion.div
+                        key={`${field.label}-${index}`}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                        className="field-card"
+                        style={{
+                          position: 'absolute',
+                          left: `${position.x}px`,
+                          top: `${position.y}px`,
+                        }}
                       >
-                        <Trash2 size={16} />
-                      </button>
+                        <button
+                          onClick={() => handleRemoveField(index)}
+                          className="field-card__delete-btn"
+                          aria-label="Remove field"
+                        >
+                          <Trash2 size={16} />
+                        </button>
 
-                      <label className="field-card__label">{field.label}</label>
-                      <div className="field-card__position">
-                        Pos: {field.position?.x || 0}, {field.position?.y || 0}
-                      </div>
-                      {renderMockInput(field.fieldType)}
-                    </motion.div>
-                  ))}
+                        <label className="field-card__label">{field.label}</label>
+                        <div className="field-card__position">
+                          Pos: {position.x}, {position.y}
+                        </div>
+                        {renderMockInput(field.fieldType)}
+                      </motion.div>
+                    );
+                  })}
                 </AnimatePresence>
               </div>
             )}
