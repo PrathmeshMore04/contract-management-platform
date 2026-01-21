@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { getBlueprints, createContract } from '../services/api';
 import toast from 'react-hot-toast';
 import LifecycleStepper from './LifecycleStepper';
+import SignatureCanvas from 'react-signature-canvas';
 import './CreateContract.css';
 
 const CreateContract = () => {
@@ -13,6 +14,13 @@ const CreateContract = () => {
   const [loading, setLoading] = useState(false);
   const [fetchingBlueprints, setFetchingBlueprints] = useState(true);
   const [contractStatus, setContractStatus] = useState('Created'); // For viewing mode
+
+  // Hold refs for each signature field (keyed by field label)
+  const signatureRefs = useRef({});
+
+  const signatureFields = useMemo(() => {
+    return (selectedBlueprint?.fields || []).filter((f) => f?.fieldType === 'signature' && f?.label);
+  }, [selectedBlueprint]);
 
   // Fetch blueprints on mount
   useEffect(() => {
@@ -73,9 +81,21 @@ const CreateContract = () => {
     setLoading(true);
 
     try {
+      // Materialize signature pads into base64 data URLs before submit
+      const dataForSubmit = { ...formData };
+      signatureFields.forEach((field) => {
+        const ref = signatureRefs.current[field.label];
+        if (!ref) return;
+        if (ref.isEmpty()) {
+          dataForSubmit[field.label] = '';
+          return;
+        }
+        dataForSubmit[field.label] = ref.getTrimmedCanvas().toDataURL('image/png');
+      });
+
       const contractData = {
         blueprintId: selectedBlueprintId,
-        data: formData
+        data: dataForSubmit
       };
 
       await createContract(contractData);
@@ -112,7 +132,15 @@ const CreateContract = () => {
             <span>{value || 'Not set'}</span>
           ) : field.fieldType === 'signature' ? (
             <div className="contract-field__signature-readonly">
-              {value || 'No signature'}
+              {typeof value === 'string' && value.startsWith('data:image') ? (
+                <img
+                  src={value}
+                  alt={`${field.label} signature`}
+                  className="contract-field__signature-image"
+                />
+              ) : (
+                <span>{value || 'No signature'}</span>
+              )}
             </div>
           ) : (
             <span>{value || '—'}</span>
@@ -150,13 +178,31 @@ const CreateContract = () => {
       case 'signature':
         return (
           <div className="contract-field__signature-wrapper">
-            <textarea
-              value={value}
-              onChange={(e) => handleFieldChange(field.label, e.target.value)}
-              placeholder="Enter signature or signature data"
-              className="contract-field__input contract-field__input--signature"
-              rows="4"
-            />
+            <div className="contract-field__signature-pad">
+              <SignatureCanvas
+                ref={(ref) => {
+                  if (ref) signatureRefs.current[field.label] = ref;
+                }}
+                penColor="#111827"
+                backgroundColor="rgba(255,255,255,1)"
+                canvasProps={{
+                  className: 'contract-field__signature-canvas',
+                  'aria-label': `${field.label} signature pad`,
+                }}
+              />
+            </div>
+            <button
+              type="button"
+              className="contract-field__signature-clear"
+              onClick={() => {
+                const ref = signatureRefs.current[field.label];
+                if (!ref) return;
+                ref.clear();
+                handleFieldChange(field.label, '');
+              }}
+            >
+              Clear
+            </button>
           </div>
         );
       
