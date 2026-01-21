@@ -79,12 +79,12 @@ A full-stack Contract Management Platform built with MERN stack (MongoDB, Expres
 └────────┬────────┘
          │
     ┌────┴────┐
-    │ Routes │
-    └───┬────┘
+    │ Routes  │
+    └───┬─────┘
         │
-   ┌────┴────┐
+   ┌────┴──────┐
    │Controllers│
-   └────┬─────┘
+   └────┬──────┘
         │
    ┌────┴────┐
    │ Models  │
@@ -491,7 +491,3 @@ ISC
 ## 👤 Author
 
 Prathmesh More
-
----
-
-**Note**: This project was built as an assignment submission. For production use, additional security measures, error handling, and scalability considerations should be implemented.
