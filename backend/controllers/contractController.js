@@ -1,49 +1,41 @@
 const Contract = require('../models/Contract');
 const Blueprint = require('../models/Blueprint');
 
-// State machine definition for contract lifecycle
 const VALID_TRANSITIONS = {
   'Created': ['Approved', 'Revoked'],
   'Approved': ['Sent'],
   'Sent': ['Signed', 'Revoked'],
   'Signed': ['Locked'], // Can transition to Locked
-  'Locked': [], // Immutable - no transitions allowed
-  'Revoked': [] // Immutable - no transitions allowed
+  'Locked': [],
+  'Revoked': []
 };
 
-// Helper function to validate status transition
 const isValidTransition = (currentStatus, newStatus) => {
   if (currentStatus === newStatus) {
-    return true; // No change is valid
+    return true;
   }
   
   const allowedTransitions = VALID_TRANSITIONS[currentStatus] || [];
   return allowedTransitions.includes(newStatus);
 };
 
-// Helper function to check if contract is immutable
 const isImmutable = (status) => {
   return status === 'Locked' || status === 'Revoked';
 };
 
-// Helper function to check if user has permission for status transition
 const hasPermissionForStatus = (userRole, targetStatus) => {
-  // Admin has all permissions
   if (userRole === 'admin') {
     return true;
   }
 
-  // Approver can transition to 'Approved' or 'Sent'
   if (userRole === 'approver') {
     return targetStatus === 'Approved' || targetStatus === 'Sent';
   }
 
-  // Signer can transition to 'Signed'
   if (userRole === 'signer') {
     return targetStatus === 'Signed';
   }
 
-  // Default: no permission
   return false;
 };
 
@@ -54,7 +46,6 @@ const createContract = async (req, res) => {
   try {
     const { blueprintId, data } = req.body;
 
-    // Validation
     if (!blueprintId) {
       return res.status(400).json({ 
         success: false,
@@ -62,7 +53,6 @@ const createContract = async (req, res) => {
       });
     }
 
-    // Validate that blueprint exists
     const blueprint = await Blueprint.findById(blueprintId);
     if (!blueprint) {
       return res.status(404).json({
@@ -71,7 +61,6 @@ const createContract = async (req, res) => {
       });
     }
 
-    // Server-side validation against blueprint fields
     const incomingData = (data && typeof data === 'object') ? data : {};
     const validatedData = {};
 
@@ -83,8 +72,6 @@ const createContract = async (req, res) => {
       const hasKey = Object.prototype.hasOwnProperty.call(incomingData, key);
       const value = incomingData[key];
 
-      // Enforce required fields when blueprint defines required=true
-      // Note: blueprint field schema may not include `required`; if absent, treated as optional.
       const isRequired = field.required === true;
       if (isRequired) {
         const isMissing =
@@ -101,7 +88,6 @@ const createContract = async (req, res) => {
         }
       }
 
-      // Only allow fields that exist in blueprint to be saved (strip unknown fields)
       if (hasKey) {
         validatedData[key] = value;
       }
@@ -112,7 +98,6 @@ const createContract = async (req, res) => {
       name: req.user?.name || 'System'
     };
 
-    // Create contract with default status 'Created' and initialize history
     const contract = await Contract.create({
       blueprintId,
       data: validatedData,
@@ -126,7 +111,6 @@ const createContract = async (req, res) => {
       ]
     });
 
-    // Populate blueprintId for response
     await contract.populate('blueprintId', 'name');
 
     res.status(201).json({
@@ -179,7 +163,6 @@ const updateContractStatus = async (req, res) => {
     const { id } = req.params;
     const { status, note } = req.body;
 
-    // Validate status is provided
     if (!status) {
       return res.status(400).json({
         success: false,
@@ -187,7 +170,6 @@ const updateContractStatus = async (req, res) => {
       });
     }
 
-    // Validate status is a valid enum value
     const validStatuses = ['Created', 'Approved', 'Sent', 'Signed', 'Locked', 'Revoked'];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({
@@ -196,7 +178,6 @@ const updateContractStatus = async (req, res) => {
       });
     }
 
-    // Find contract
     const contract = await Contract.findById(id);
     if (!contract) {
       return res.status(404).json({
@@ -205,7 +186,6 @@ const updateContractStatus = async (req, res) => {
       });
     }
 
-    // Check immutability - Signed and Revoked contracts cannot be changed
     if (isImmutable(contract.status)) {
       return res.status(400).json({
         success: false,
@@ -213,7 +193,6 @@ const updateContractStatus = async (req, res) => {
       });
     }
 
-    // Validate transition
     if (!isValidTransition(contract.status, status)) {
       return res.status(400).json({
         success: false,
@@ -221,7 +200,6 @@ const updateContractStatus = async (req, res) => {
       });
     }
 
-    // Check role-based permissions
     const userRole = req.user?.role || 'admin';
     if (!hasPermissionForStatus(userRole, status)) {
       return res.status(403).json({
@@ -232,10 +210,8 @@ const updateContractStatus = async (req, res) => {
 
     const previousStatus = contract.status;
 
-    // Update status
     contract.status = status;
 
-    // Append to history only when status actually changes
     if (previousStatus !== status) {
       const changedBy = {
         id: req.user?.id || 'system',
@@ -251,7 +227,6 @@ const updateContractStatus = async (req, res) => {
     }
     await contract.save();
 
-    // Populate blueprintId for response
     await contract.populate('blueprintId', 'name');
 
     res.status(200).json({

@@ -15,14 +15,10 @@ const CreateContract = () => {
   const [fetchingBlueprints, setFetchingBlueprints] = useState(true);
   const [contractStatus, setContractStatus] = useState('Created'); // For viewing mode
 
-  // Hold refs for each signature field (keyed by field label)
-  const signatureRefs = useRef({});
-
   const signatureFields = useMemo(() => {
     return (selectedBlueprint?.fields || []).filter((f) => f?.fieldType === 'signature' && f?.label);
   }, [selectedBlueprint]);
 
-  // Fetch blueprints on mount
   useEffect(() => {
     const fetchBlueprints = async () => {
       try {
@@ -39,7 +35,6 @@ const CreateContract = () => {
     fetchBlueprints();
   }, []);
 
-  // Handle blueprint selection
   const handleBlueprintSelect = (e) => {
     const blueprintId = e.target.value;
     setSelectedBlueprintId(blueprintId);
@@ -47,7 +42,6 @@ const CreateContract = () => {
     if (blueprintId) {
       const blueprint = blueprints.find(bp => bp._id === blueprintId);
       setSelectedBlueprint(blueprint);
-      // Initialize form data with empty values for each field
       const initialData = {};
       if (blueprint?.fields) {
         blueprint.fields.forEach(field => {
@@ -61,7 +55,6 @@ const CreateContract = () => {
     }
   };
 
-  // Handle form field changes
   const handleFieldChange = (fieldLabel, value) => {
     setFormData(prev => ({
       ...prev,
@@ -69,7 +62,6 @@ const CreateContract = () => {
     }));
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -81,7 +73,6 @@ const CreateContract = () => {
     setLoading(true);
 
     try {
-      // Materialize signature pads into base64 data URLs before submit
       const dataForSubmit = { ...formData };
       signatureFields.forEach((field) => {
         const ref = signatureRefs.current[field.label];
@@ -102,7 +93,6 @@ const CreateContract = () => {
       
       toast.success('Contract created successfully!');
       
-      // Reset form
       setSelectedBlueprintId('');
       setSelectedBlueprint(null);
       setFormData({});
@@ -114,16 +104,13 @@ const CreateContract = () => {
     }
   };
 
-  // Check if contract is read-only (Signed or Locked)
   const isReadOnly = contractStatus === 'Signed' || contractStatus === 'Locked';
 
-  // Render form field based on type
   const renderField = (field, isReadOnly) => {
     if (!field || !field.label) return null;
     const value = formData[field.label] || '';
 
     if (isReadOnly) {
-      // Read-only mode - show as plain text
       return (
         <div className="contract-field__readonly">
           {field.fieldType === 'checkbox' ? (
@@ -149,7 +136,6 @@ const CreateContract = () => {
       );
     }
 
-    // Edit mode - show inputs
     switch (field.fieldType) {
       case 'date':
         return (
@@ -223,13 +209,11 @@ const CreateContract = () => {
 
   return (
     <div className="contract-form">
-      {/* Header */}
       <div className="contract-form__header">
         <h1 className="contract-form__title">Create Contract</h1>
         <p className="contract-form__subtitle">Select a blueprint and fill in the contract details</p>
       </div>
 
-      {/* Blueprint Selection */}
       <div className="blueprint-selector">
         <label htmlFor="blueprint-select" className="blueprint-selector__label">
           Select Blueprint
@@ -256,21 +240,17 @@ const CreateContract = () => {
         )}
       </div>
 
-      {/* Contract Paper View */}
       {selectedBlueprint && selectedBlueprint?.fields && selectedBlueprint?.fields?.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="contract-form__document-wrapper"
         >
-          {/* Lifecycle Stepper */}
           <div className="contract-form__stepper">
             <LifecycleStepper currentStatus={contractStatus} />
           </div>
 
-          {/* Paper Container */}
           <div className="contract-document">
-            {/* Document Header */}
             <div className="contract-document__header">
               <h2 className="contract-document__title">
                 {selectedBlueprint?.name || 'Contract'}
@@ -280,11 +260,9 @@ const CreateContract = () => {
               </p>
             </div>
 
-            {/* Contract Fields */}
             <form onSubmit={handleSubmit} className="contract-document__form">
               {selectedBlueprint?.fields?.map((field, index) => {
                 const position = field.position || { x: 0, y: 0 };
-                // Position is already relative to the form container with padding
                 return (
                   <motion.div
                     key={index}
@@ -309,7 +287,6 @@ const CreateContract = () => {
                 );
               })}
 
-              {/* Submit Button */}
               {!isReadOnly && (
                 <div className="contract-document__actions">
                   <button

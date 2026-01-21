@@ -16,7 +16,6 @@ const createBlueprint = async (req, res) => {
       return res.status(400).json({ message: 'Fields array is required' });
     }
 
-    // Validate each field
     for (const field of fields) {
       if (!field.label) {
         return res.status(400).json({ message: 'Each field must have a label' });
@@ -107,7 +106,6 @@ const updateBlueprint = async (req, res) => {
   try {
     const { name, fields } = req.body;
 
-    // Validation
     if (!name) {
       return res.status(400).json({ message: 'Blueprint name is required' });
     }
@@ -120,7 +118,6 @@ const updateBlueprint = async (req, res) => {
       return res.status(400).json({ message: 'Fields array cannot be empty' });
     }
 
-    // Validate each field
     for (const field of fields) {
       if (!field.label) {
         return res.status(400).json({ message: 'Each field must have a label' });
