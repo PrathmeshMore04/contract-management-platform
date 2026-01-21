@@ -79,12 +79,12 @@ A full-stack Contract Management Platform built with MERN stack (MongoDB, Expres
 └────────┬────────┘
          │
     ┌────┴────┐
-    │ Routes │
-    └───┬────┘
+    │ Routes  │
+    └───┬─────┘
         │
-   ┌────┴────┐
+   ┌────┴──────┐
    │Controllers│
-   └────┬─────┘
+   └────┬──────┘
         │
    ┌────┴────┐
    │ Models  │
@@ -111,12 +111,12 @@ A full-stack Contract Management Platform built with MERN stack (MongoDB, Expres
     │ Layout  │
     └───┬─────┘
         │
-   ┌────┴────┐
-   │ Pages   │
-   │ - Dashboard
-   │ - Blueprints
-   │ - Create Contract
-   └────┬────┘
+   ┌────┴───────────────┐
+   │ Pages              │
+   │ - Dashboard        │
+   │ - Blueprints       │
+   │ - Create Contract  │
+   └────┬───────────────┘
         │
    ┌────┴────┐
    │ Services│
@@ -204,11 +204,6 @@ A full-stack Contract Management Platform built with MERN stack (MongoDB, Expres
    ```
 
 ## 📡 API Design
-
-### Base URL
-```
-http://localhost:5000/api
-```
 
 ### Blueprint Endpoints
 
@@ -491,7 +486,3 @@ ISC
 ## 👤 Author
 
 Prathmesh More
-
----
-
-**Note**: This project was built as an assignment submission. For production use, additional security measures, error handling, and scalability considerations should be implemented.
