@@ -13,8 +13,13 @@ const historyEntrySchema = new mongoose.Schema(
       default: Date.now
     },
     changedBy: {
+      type: Object,
+      required: true,
+      default: {}
+    },
+    note: {
       type: String,
-      required: true
+      default: ''
     }
   },
   { _id: false }

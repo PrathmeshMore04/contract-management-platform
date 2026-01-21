@@ -107,7 +107,10 @@ const createContract = async (req, res) => {
       }
     }
 
-    const changedBy = req.user?.role || req.user?.id || 'system';
+    const changedBy = {
+      id: req.user?.id || 'system',
+      name: req.user?.name || 'System'
+    };
 
     // Create contract with default status 'Created' and initialize history
     const contract = await Contract.create({
@@ -117,7 +120,8 @@ const createContract = async (req, res) => {
         {
           status: 'Created',
           timestamp: new Date(),
-          changedBy
+          changedBy,
+          note: ''
         }
       ]
     });
@@ -173,7 +177,7 @@ const getAllContracts = async (req, res) => {
 const updateContractStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, note } = req.body;
 
     // Validate status is provided
     if (!status) {
@@ -233,12 +237,16 @@ const updateContractStatus = async (req, res) => {
 
     // Append to history only when status actually changes
     if (previousStatus !== status) {
-      const changedBy = req.user?.role || req.user?.id || 'system';
+      const changedBy = {
+        id: req.user?.id || 'system',
+        name: req.user?.name || 'System'
+      };
       contract.history = contract.history || [];
       contract.history.push({
         status,
         timestamp: new Date(),
-        changedBy
+        changedBy,
+        note: typeof note === 'string' ? note : ''
       });
     }
     await contract.save();
