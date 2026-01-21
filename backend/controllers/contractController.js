@@ -71,10 +71,19 @@ const createContract = async (req, res) => {
       });
     }
 
-    // Create contract with default status 'Created'
+    const changedBy = req.user?.role || req.user?.id || 'system';
+
+    // Create contract with default status 'Created' and initialize history
     const contract = await Contract.create({
       blueprintId,
-      data: data || {}
+      data: data || {},
+      history: [
+        {
+          status: 'Created',
+          timestamp: new Date(),
+          changedBy
+        }
+      ]
     });
 
     // Populate blueprintId for response
@@ -181,8 +190,21 @@ const updateContractStatus = async (req, res) => {
       });
     }
 
+    const previousStatus = contract.status;
+
     // Update status
     contract.status = status;
+
+    // Append to history only when status actually changes
+    if (previousStatus !== status) {
+      const changedBy = req.user?.role || req.user?.id || 'system';
+      contract.history = contract.history || [];
+      contract.history.push({
+        status,
+        timestamp: new Date(),
+        changedBy
+      });
+    }
     await contract.save();
 
     // Populate blueprintId for response

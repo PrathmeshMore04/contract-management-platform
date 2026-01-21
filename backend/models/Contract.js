@@ -1,5 +1,25 @@
 const mongoose = require('mongoose');
 
+const historyEntrySchema = new mongoose.Schema(
+  {
+    status: {
+      type: String,
+      enum: ['Created', 'Approved', 'Sent', 'Signed', 'Locked', 'Revoked'],
+      required: true
+    },
+    timestamp: {
+      type: Date,
+      required: true,
+      default: Date.now
+    },
+    changedBy: {
+      type: String,
+      required: true
+    }
+  },
+  { _id: false }
+);
+
 // Contract Schema
 const contractSchema = new mongoose.Schema({
   blueprintId: {
@@ -11,6 +31,10 @@ const contractSchema = new mongoose.Schema({
     type: String,
     enum: ['Created', 'Approved', 'Sent', 'Signed', 'Locked', 'Revoked'],
     default: 'Created'
+  },
+  history: {
+    type: [historyEntrySchema],
+    default: []
   },
   // Store the values entered for blueprint fields
   // Using Map type to store key-value pairs where key is field label/id
